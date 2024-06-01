@@ -49,8 +49,8 @@ def checkout(items):
                     if free_item_count >= count:
                         total_price += count * price_table[item]
                     else:
-                        total_price += (count - free_item_count) * \
-                            price_table[item]
+                        total_price += (count - (count //
+                                        (offer[0] + 1))) * price_table[item]
         else:
             total_price += count * price_table[item]
 
@@ -62,3 +62,4 @@ print(checkout('UUUUUUUU')) # 240
 print(checkout('EE')) # 80
 print(checkout('EEB')) # 80
 print(checkout('EEEB')) # 120
+
