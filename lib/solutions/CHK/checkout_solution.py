@@ -34,7 +34,7 @@ def checkout(skus):
         if product in offers:
             for offer_quantity, offer_price in offers[product]:
                 total_amount += (quantity // offer_quantity) * offer_price
-                total_amount %= offer_quantity
+                quantity %= offer_quantity
 
         total_amount += quantity * prices[product]
 
@@ -48,8 +48,3 @@ def checkout(skus):
         total_amount += quantity * prices[product]
 
     return total_amount
-
-
-
-
-
