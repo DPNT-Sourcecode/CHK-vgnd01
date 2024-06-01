@@ -5,8 +5,9 @@
 def checkout(skus):
     from collections import Counter
 
-    prices = {'A': 50, 'B': 30, 'C': 20, 'D': 15}
+    prices = {'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40}
     offers = {'A': [(5, 200), (3, 130)], 'B': [(2, 45)], 'E': [(2, 80)]}
+
 
     # if sku not in prices then return -1
     for product in skus:
@@ -48,3 +49,5 @@ def checkout(skus):
         total_amount += quantity * prices[product]
 
     return total_amount
+
+print(checkout('A'))
