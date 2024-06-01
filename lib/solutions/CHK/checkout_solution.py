@@ -41,11 +41,11 @@ def checkout(skus):
         if item in item_counts:
             item_count = item_counts[item]
             free_item_count = item_count // required_count
-            if free_item in item_counts:
-                item_counts[free_item] = max(
-                    0, item_counts[free_item] - free_item_count)
-            else:
-                item_counts[free_item] = -free_item_count
+            if free_item_count > item_counts.get(free_item, 0):
+                free_item_count = item_counts.get(free_item, 0)
+            if free_item_count > 0:
+                item_counts[free_item] -= free_item_count
+                item_counts[item] -= free_item_count * required_count
 
     # Calculate total price considering multi-priced offers
     for item, count in item_counts.items():
@@ -56,6 +56,14 @@ def checkout(skus):
         total_amount += count * prices[item]
 
     return total_amount
+
+
+print(checkout("UUU"))
+print(checkout("EE"))
+print(checkout("RRR"))
+
+
+
 
 
 
