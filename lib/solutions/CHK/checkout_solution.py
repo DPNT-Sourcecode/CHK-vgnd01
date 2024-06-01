@@ -43,6 +43,12 @@ def checkout(skus):
                 offer_applications = count // offer_count
                 total_amount += offer_applications * offer_price
                 count -= offer_applications * offer_count
+                # Deduct the price of product B when applying the special offer for product E
+                if item == 'E' and 'B' in item_counts:
+                    count_B_for_E = min(offer_applications,
+                                        item_counts['B'] // 2)
+                    total_amount -= count_B_for_E * prices['B']
+                    item_counts['B'] -= count_B_for_E * 2
         # Add regular price for the remaining items
         total_amount += count * prices[item]
 
@@ -51,6 +57,10 @@ def checkout(skus):
 print(checkout('UUUU')) # 120
 print(checkout('UUUUU'))  # 160
 print(checkout('UUUUUUUU')) # 240
+print(checkout('EE')) # 80
+print(checkout('EEB')) # 80
+print(checkout('EEEB')) # 120
+
 
 
 
