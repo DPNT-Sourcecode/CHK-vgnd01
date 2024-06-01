@@ -14,24 +14,24 @@ from runner.user_input_action import get_user_input
 
 """
   ~~~~~~~~~~ Running the system: ~~~~~~~~~~~~~
- 
+
     From IDE:
        Run this file from the IDE.
- 
+
     From command line:
        PYTHONPATH=lib python lib/send_command_to_server.py
- 
+
     To run your unit tests locally:
        PYTHONPATH=lib python -m pytest -q test/solution_tests/
- 
+
   ~~~~~~~~~~ The workflow ~~~~~~~~~~~~~
- 
+
     By running this file you interact with a challenge server.
     The interaction follows a request-response pattern:
          * You are presented with your current progress and a list of actions.
          * You trigger one of the actions by typing it on the console.
          * After the action feedback is presented, the execution will stop.
- 
+
     +------+-----------------------------------------------------------------------+
     | Step | The usual workflow                                                    |
     +------+-----------------------------------------------------------------------+
@@ -46,13 +46,13 @@ from runner.user_input_action import get_user_input
     |  7.  | Observe the output, check for failed requests.                        |
     |  8.  | If passed, go to step 1.                                              |
     +------+-----------------------------------------------------------------------+
- 
+
     You are encouraged to change this project as you please:
          * You can use your preferred libraries.
          * You can use your own test framework.
          * You can change the file structure.
          * Anything really, provided that this file stays runnable.
- 
+
 """
 
 runner = QueueBasedImplementationRunnerBuilder()\
@@ -71,3 +71,4 @@ ChallengeSession\
     .with_config(Utils.get_config())\
     .with_action_provider(lambda: get_user_input(sys.argv[1:]))\
     .start()
+
