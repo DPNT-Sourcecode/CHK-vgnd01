@@ -38,11 +38,17 @@ def checkout(skus):
 
         total_amount += quantity * prices[product]
 
+    # account for free products
+
+    for product, quantity in free_products.items():
+        item_counts[product] -= min(item_counts[product], quantity)
+
     # add remaining item prices left in basket
     for product, quantity in item_counts.items():
         total_amount += quantity * prices[product]
 
     return total_amount
+
 
 
 
