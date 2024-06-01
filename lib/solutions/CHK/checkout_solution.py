@@ -5,7 +5,7 @@ from collections import Counter
 
 def checkout(skus):
     # Define prices and special offers
-    prices = {'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40}
+    prices = {'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40, 'F': 10}
     offers = {
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)]
@@ -25,6 +25,12 @@ def checkout(skus):
         free_b_count = e_count // 2
         item_counts['B'] = max(0, item_counts.get('B', 0) - free_b_count)
 
+    # handle the special case for F which gives a free F for every 2 F
+    if 'F' in item_counts:
+        f_count = item_counts['F']
+        free_f_count = f_count // 3
+        item_counts['F'] = f_count - free_f_count
+
     # Calculate total price considering multi-priced offers
     for item, count in item_counts.items():
         if item in offers:
@@ -35,5 +41,4 @@ def checkout(skus):
 
     return total_amount
 
-print(checkout('A'))
 
