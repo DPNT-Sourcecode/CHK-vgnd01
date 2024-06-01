@@ -1,53 +1,39 @@
 
-
+from collections import Counter
 # noinspection PyUnusedLocal
 # skus = unicode string
+
 def checkout(skus):
-    from collections import Counter
-
+    # Define prices and special offers
     prices = {'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40}
-    offers = {'A': [(5, 200), (3, 130)], 'B': [(2, 45)], 'E': [(2, 80)]}
+    offers = {
+        'A': [(5, 200), (3, 130)],
+        'B': [(2, 45)]
+    }
 
+    # Validate input
+    if not all(c in prices for c in skus):
+        return -1
 
-    # if sku not in prices then return -1
-    for product in skus:
-        if product not in prices:
-            return -1
-
-    # use Counter to keep track of each product
+    # Count items
     item_counts = Counter(skus)
-
     total_amount = 0
 
-    free_products = Counter()
-    # account for 2E and 1B offer
+    # Handle the special case for E which gives a free B
     if 'E' in item_counts:
-        e_quantity = item_counts['E']
-        while e_quantity >= 2:
-            total_amount += offers['E'][0][1]
-            e_quantity -= 2
-            free_products['B'] += 1
-        total_amount += e_quantity * prices['E']
-        item_counts['E'] = 0
+        e_count = item_counts['E']
+        free_b_count = e_count // 2
+        item_counts['B'] = max(0, item_counts.get('B', 0) - free_b_count)
 
-    # account for other offers
-    for product, quantity in item_counts.items():
-        if product in offers:
-            for offer_quantity, offer_price in offers[product]:
-                total_amount += (quantity // offer_quantity) * offer_price
-                quantity %= offer_quantity
-
-        total_amount += quantity * prices[product]
-
-    # account for free products
-
-    for product, quantity in free_products.items():
-        item_counts[product] -= min(item_counts[product], quantity)
-
-    # add remaining item prices left in basket
-    for product, quantity in item_counts.items():
-        total_amount += quantity * prices[product]
+    # Calculate total price considering multi-priced offers
+    for item, count in item_counts.items():
+        if item in offers:
+            for offer_count, offer_price in sorted(offers[item], key=lambda x: -x[0]):
+                total_amount += (count // offer_count) * offer_price
+                count %= offer_count
+        total_amount += count * prices[item]
 
     return total_amount
 
 print(checkout('A'))
+
