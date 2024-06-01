@@ -26,18 +26,24 @@ def checkout(skus):
             total_amount += offers['E'][0][1]
             e_quantity -= 2
             free_products['B'] += 1
-
+        total_amount += e_quantity * prices['E']
         item_counts['E'] = 0
 
+    # account for other offers
     for product, quantity in item_counts.items():
         if product in offers:
-            offer_quantity, offer_price = offers[product]
-            total_amount += (quantity // offer_quantity) * offer_price
-            total_amount += (quantity % offer_quantity) * prices[product]
-        else:
-            total_amount += quantity * prices[product]
+            for offer_quantity, offer_price in offers[product]:
+                total_amount += (quantity // offer_quantity) * offer_price
+                total_amount %= offer_quantity
+
+        total_amount += quantity * prices[product]
+
+    # add remaining item prices left in basket
+    for product, quantity in item_counts.items():
+        total_amount += quantity * prices[product]
 
     return total_amount
+
 
 
 
