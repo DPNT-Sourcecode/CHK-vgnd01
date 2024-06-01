@@ -24,7 +24,7 @@ def checkout(skus):
         'P': [(5, 200)],
         'Q': [(3, 80)],
         'R': [(3, prices['Q'])],
-        'U': [(4, prices['U'])],
+        'U': [(4, 120)],
         'V': [(3, 130), (2, 90)]
     }
 
@@ -39,17 +39,19 @@ def checkout(skus):
     # Apply special offers for each item
     for item, count in item_counts.items():
         if item in offers:
-            for offer_count, offer_price in sorted(offers[item], key=lambda x: -x[0]):
-                while count >= offer_count:
-                    total_amount += offer_price
-                    count -= offer_count
+            for offer_count, offer_price in sorted(offers[item], reverse=True):
+                offer_applications = count // offer_count
+                total_amount += offer_applications * offer_price
+                count -= offer_applications * offer_count
         # Add regular price for the remaining items
         total_amount += count * prices[item]
 
     return total_amount
 
-print(checkout('UUUU'))
-print(checkout('UUUUUUUU'))
+print(checkout('UUUU')) # 120
+print(checkout('UUUUU'))  # 160
+print(checkout('UUUUUUUU')) # 240
+
 
 
 
