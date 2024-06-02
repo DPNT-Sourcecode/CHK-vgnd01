@@ -1,6 +1,7 @@
 # noinspection PyUnusedLocal
 # skus = unicode string
 
+
 def checkout(skus):
     price_table = {
         'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40, 'F': 10,
@@ -12,7 +13,7 @@ def checkout(skus):
     special_offers = {
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)],
-        'E': [(2, {'B': 1})],  # 2E for the price of 1B
+        'E': [(2, {'B': 1})],  # 2E and get 1B free
         'F': [(3, 20)],  # 3F for the price of 2F which is 3F for 20 simplified
         'H': [(10, 80), (5, 45)],
         'K': [(2, 150)],
@@ -31,7 +32,10 @@ def checkout(skus):
     # Count occurrences of each SKU
     item_counts = count_items(skus)
 
-    # Calculate total price
+    # Apply all free item offers first
+    apply_free_item_offers(item_counts, special_offers)
+
+    # Calculate total price after applying special offers
     total_price = calculate_total_price(
         item_counts, price_table, special_offers)
 
@@ -57,6 +61,19 @@ def count_items(skus):
     return item_counts
 
 
+def apply_free_item_offers(item_counts, special_offers):
+    """Apply offers that give free items first, updating item_counts."""
+    for item, offers in special_offers.items():
+        for offer in offers:
+            # If the offer gives free items
+            if isinstance(offer[1], dict):
+                applicable_offers = item_counts.get(item, 0) // offer[0]
+                for free_item, free_count in offer[1].items():
+                    if free_item in item_counts:
+                        item_counts[free_item] = max(
+                            0, item_counts[free_item] - (applicable_offers * free_count))
+
+
 def calculate_total_price(item_counts, price_table, special_offers):
     """Calculate the total price of items in the basket
     considering special offers."""
@@ -64,13 +81,14 @@ def calculate_total_price(item_counts, price_table, special_offers):
     for item, count in item_counts.items():
         if item in special_offers:
             total_price += apply_special_offers_to_items(
-                item, count, special_offers[item], price_table, item_counts)
+                item, count, special_offers[item], price_table)
         else:
             total_price += count * price_table[item]
+
     return total_price
 
 
-def apply_special_offers_to_items(item, count, offers, price_table, item_counts):
+def apply_special_offers_to_items(item, count, offers, price_table):
     """Apply special offers for an item and return the total price."""
     total_price = 0
     # Sort offers by the quantity in descending order to prioritize larger offers first
@@ -82,69 +100,46 @@ def apply_special_offers_to_items(item, count, offers, price_table, item_counts)
             while count >= special_count:
                 total_price += special_offer
                 count -= special_count
-        elif isinstance(special_offer, dict):
-            while is_offer_applicable(item_counts, special_offer):
-                total_price += apply_special_offer(
-                    item, special_count, special_offer,
-                    price_table, item_counts)
-                count = item_counts[item]
-            break  # Break after applying the first applicable offer
 
     total_price += count * price_table[item]
     return total_price
 
 
-def is_offer_applicable(item_counts, special_offer):
-    """Check if the required items for a special offer are available in the basket
-    i.e. if the counts of basket is more or equal to the special offers counts."""
-    for other_item, offer_count in special_offer.items():
-        if other_item not in item_counts or item_counts[other_item] < offer_count:
-            return False
-    return True
+# Test cases
+# print('CHECKOUT 1')
+# print(checkout('A'))  # 50
+# print(checkout('B'))  # 30
+# print(checkout('C'))  # 20
+# print(checkout('D'))  # 15
+# print(checkout('AA'))  # 100
+# print(checkout('BB'))  # 45
 
+# print('CHECKOUT 2')
+# print(checkout('AAA'))  # 130
+# print(checkout('AAAA'))  # 180
+# print(checkout('AAAAA'))  # 200
+# print(checkout('BB'))  # 45
+# print(checkout('EEB'))  # 80
+# print(checkout('EEEB'))  # 120
+# print(checkout('EEBEEB'))  # 160
 
-def apply_special_offer(item, special_count, special_offer, price_table, item_counts):
-    """Apply a special offer and update the counts and total price."""
-    total_price = 0
-    for other_item, offer_count in special_offer.items():
-        item_counts[other_item] -= offer_count
-    total_price += special_count * price_table[item]
-    item_counts[item] -= special_count
-    return total_price
+# print('CHECKOUT 3')
+# print(checkout('F'))  # 10
+# print(checkout('FF'))  # 20
+# print(checkout('FFF'))  # 20
+# print(checkout('FFFF'))  # 30
+# print(checkout('FFFFF'))  # 40
+# print(checkout('FFFFFF'))  # 40
 
+# print('CHECKOUT 4')
+# print(checkout('HHHHH'))  # 45
+# print(checkout('HHHHHHHHHH'))  # 80
+# print(checkout('KK'))  # 150
+# print(checkout('RRRQ'))  # 150
+# print(checkout('UUUU'))  # 120
+# print(checkout('BBEEEE'))  # 160
+# print(checkout('EEEEBB'))  # 160
 
-print('CHECKOUT 1')
-print(checkout('A'))  # 50
-print(checkout('B'))  # 30
-print(checkout('C'))  # 20
-print(checkout('D'))  # 15
-print(checkout('AA'))  # 100
-print(checkout('BB'))  # 45
-
-print('CHECKOUT 2')
-print(checkout('AAA'))  # 130
-print(checkout('AAAA'))  # 180
-print(checkout('AAAAA'))  # 200
-print(checkout('BB'))  # 45
-print(checkout('EEB'))  # 80
-print(checkout('EEEB'))  # 120
-print(checkout('EEBEEB'))  # 160
-
-print('CHECKOUT 3')
-print(checkout('F'))  # 10
-print(checkout('FF'))  # 20
-print(checkout('FFF'))  # 20
-print(checkout('FFFF'))  # 30
-print(checkout('FFFFF'))  # 40
-print(checkout('FFFFFF'))  # 40
-
-print('CHECKOUT 4')
-print(checkout('HHHHH'))  # 45
-print(checkout('HHHHHHHHHH'))  # 80
-print(checkout('KK'))  # 150
-print(checkout('RRRQ'))  # 150
-print(checkout('UUUU'))  # 120
-print(checkout('BEBEEE'))  # 160
-print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ'))  # 1880
-print(checkout('LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH'))  # 1880
-
+# print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ'))  # 1880
+# print(checkout('LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH'))  # 1880
+# print(checkout('NNNNNNMM'))  # 240
