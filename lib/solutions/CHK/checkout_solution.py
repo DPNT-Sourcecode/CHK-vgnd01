@@ -143,7 +143,8 @@ print(checkout('HHHHH'))  # 45
 print(checkout('HHHHHHHHHH'))  # 80
 print(checkout('KK'))  # 150
 print(checkout('RRRQ'))  # 150
-
+print(checkout('UUUU'))  # 120
 print(checkout('BEBEEE'))  # 160
 print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ'))  # 1880
 print(checkout('LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH'))  # 1880
+
