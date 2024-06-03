@@ -69,6 +69,7 @@ def apply_group_discounts(item_counts):
     """Apply group discounts, updating item_counts."""
     remove_discounted_items = []
     group_discount_counter = 0
+    print(item_counts.items())
     for item, count in list(item_counts.items()):
         if item in ['S', 'T', 'X', 'Y', 'Z']:
             for _ in range(count):
@@ -179,4 +180,5 @@ def apply_special_offers_to_items(item, count, offers, price_table):
 print(checkout('SSSZ'))  # 65
 print(checkout('STXZ'))  # 65
 print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
+
 
