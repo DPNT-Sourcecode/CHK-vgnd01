@@ -177,3 +177,6 @@ print(checkout('STXS'))  # 135
 print(checkout('TTXS'))  # 75
 print(checkout('ZZZ'))  # 45
 print(checkout('YYYA'))  # 45
+print(checkout('SSSZ'))  # 65
+print(checkout('STXZ'))  # 65
+print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
