@@ -69,11 +69,11 @@ def apply_group_discounts(item_counts, price_table):
     """Apply group discounts, updating item_counts."""
     remove_discounted_items = []
     group_discount_counter = 0
+    # prioritise the items that have the highest price
     sorted_counts = sorted(
         item_counts.items(), key=lambda x: price_table.get(x[0], 0), reverse=True)
 
-    print(sorted_counts)
-    for item, count in list(item_counts.items()):
+    for item, count in sorted_counts:
         if item in ['S', 'T', 'X', 'Y', 'Z']:
             for _ in range(count):
                 remove_discounted_items.append(item)
@@ -179,10 +179,10 @@ def apply_special_offers_to_items(item, count, offers, price_table):
 # print(checkout('STXS'))  # 135
 # print(checkout('TTXS'))  # 75
 # print(checkout('ZZZ'))  # 45
-# print(checkout('YYYA'))  # 45
+# print(checkout('YYYA'))  # 95
 print(checkout('SSSZ'))  # 65
 print(checkout('STXZ'))  # 65
-print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
+# print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
 
 
 
