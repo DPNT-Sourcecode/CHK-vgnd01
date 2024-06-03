@@ -176,14 +176,10 @@ def apply_special_offers_to_items(item, count, offers, price_table):
 # print(checkout('NNNNNNMM'))  # 240
 
 # print('CHECKOUT 5')
-# print(checkout('STXS'))  # 135
-# print(checkout('TTXS'))  # 75
-# print(checkout('ZZZ'))  # 45
-# print(checkout('YYYA'))  # 95
+print(checkout('STXS'))  # 135
+print(checkout('TTXS'))  # 75
+print(checkout('ZZZ'))  # 45
+print(checkout('YYYA'))  # 95
 print(checkout('SSSZ'))  # 65
 print(checkout('STXZ'))  # 65
 # print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
-
-
-
-
