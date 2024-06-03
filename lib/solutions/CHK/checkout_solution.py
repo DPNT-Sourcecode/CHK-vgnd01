@@ -34,7 +34,7 @@ def checkout(skus):
     item_counts = count_items(skus)
 
     # Apply group discounts, which changes the item_count
-    apply_group_discounts(item_counts, price_table)
+    apply_group_discounts(item_counts)
 
     # Apply all free item offers, which changes the item_count
     apply_free_item_offers(item_counts, special_offers)
@@ -65,19 +65,16 @@ def count_items(skus):
     return item_counts
 
 
-def apply_group_discounts(item_counts, price_table):
+def apply_group_discounts(item_counts):
     """Apply group discounts, updating item_counts."""
     remove_discounted_items = []
     group_discount_counter = 0
-
     for item, count in list(item_counts.items()):
         if item in ['S', 'T', 'X', 'Y', 'Z']:
             for _ in range(count):
                 remove_discounted_items.append(item)
                 group_discount_counter += 1
                 if group_discount_counter % 3 == 0:
-                    remove_discounted_items.sort(
-                        key=lambda x: price_table[x], reverse=True)
                     # Remove items from item_counts to be replace with group_discount
                     for discounted_item in remove_discounted_items:
                         item_counts[discounted_item] -= 1
@@ -182,3 +179,4 @@ def apply_special_offers_to_items(item, count, offers, price_table):
 print(checkout('SSSZ'))  # 65
 print(checkout('STXZ'))  # 65
 print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ')) #1602
+
