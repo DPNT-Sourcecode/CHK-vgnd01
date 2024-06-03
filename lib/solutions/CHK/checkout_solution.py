@@ -5,24 +5,25 @@
 def checkout(skus):
     price_table = {
         'A': 50, 'B': 30, 'C': 20, 'D': 15, 'E': 40, 'F': 10,
-        'G': 20, 'H': 10, 'I': 35, 'J': 60, 'K': 80, 'L': 90,
+        'G': 20, 'H': 10, 'I': 35, 'J': 60, 'K': 70, 'L': 90,
         'M': 15, 'N': 40, 'O': 10, 'P': 50, 'Q': 30, 'R': 50,
-        'S': 30, 'T': 20, 'U': 40, 'V': 50, 'W': 20, 'X': 90,
-        'Y': 10, 'Z': 50
+        'S': 20, 'T': 20, 'U': 40, 'V': 50, 'W': 20, 'X': 17,
+        'Y': 20, 'Z': 21, 'group_discount': 45
     }
+
     special_offers = {
         'A': [(5, 200), (3, 130)],
         'B': [(2, 45)],
-        'E': [(2, {'B': 1})],  # 2E and get 1B free
-        'F': [(3, 20)],  # 3F for the price of 2F which is 3F for 20 simplified
+        'E': [(2, {'B': 1})],
+        'F': [(3, 20)],
         'H': [(10, 80), (5, 45)],
-        'K': [(2, 150)],
+        'K': [(2, 120)],
         'N': [(3, {'M': 1})],
         'P': [(5, 200)],
         'Q': [(3, 80)],
         'R': [(3, {'Q': 1})],
-        'U': [(4, 120)],  # 4U for the price of 3U which is 4U for 120
-        'V': [(3, 130), (2, 90)]
+        'U': [(4, 120)],
+        'V': [(3, 130), (2, 90)],
     }
 
     # Validate input
@@ -32,10 +33,13 @@ def checkout(skus):
     # Count occurrences of each SKU
     item_counts = count_items(skus)
 
-    # Apply all free item offers first
+    # Apply group discounts, which changes the item_count
+    apply_group_discounts(item_counts)
+
+    # Apply all free item offers, which changes the item_count
     apply_free_item_offers(item_counts, special_offers)
 
-    # Calculate total price after applying special offers
+    # Calculate total price after applying free item offers
     total_price = calculate_total_price(
         item_counts, price_table, special_offers)
 
@@ -61,8 +65,33 @@ def count_items(skus):
     return item_counts
 
 
+def apply_group_discounts(item_counts):
+    """Apply group discounts, updating item_counts."""
+    remove_discounted_items = []
+    group_discount_counter = 0
+
+    for item, count in list(item_counts.items()):
+        if item in ['S', 'T', 'X', 'Y', 'Z']:
+            for _ in range(count):
+                remove_discounted_items.append(item)
+                group_discount_counter += 1
+                if group_discount_counter % 3 == 0:
+                    # Remove items from item_counts to be replace with group_discount
+                    for discounted_item in remove_discounted_items:
+                        item_counts[discounted_item] -= 1
+                        if item_counts[discounted_item] == 0:
+                            del item_counts[discounted_item]
+                    # Clear the list for the next group
+                    remove_discounted_items.clear()
+
+    # Apply the group discounts
+    num_discounts_applied = group_discount_counter // 3
+
+    item_counts['group_discount'] = item_counts.get('group_discount', 0) + num_discounts_applied
+
+
 def apply_free_item_offers(item_counts, special_offers):
-    """Apply offers that give free items first, updating item_counts."""
+    """Apply offers that give free items, updating item_counts."""
     for item, offers in special_offers.items():
         for offer in offers:
             # If the offer gives free items
@@ -104,42 +133,47 @@ def apply_special_offers_to_items(item, count, offers, price_table):
     total_price += count * price_table[item]
     return total_price
 
-
 # Test cases
-# print('CHECKOUT 1')
-# print(checkout('A'))  # 50
-# print(checkout('B'))  # 30
-# print(checkout('C'))  # 20
-# print(checkout('D'))  # 15
-# print(checkout('AA'))  # 100
-# print(checkout('BB'))  # 45
+print('CHECKOUT 1')
+print(checkout('A'))  # 50
+print(checkout('B'))  # 30
+print(checkout('C'))  # 20
+print(checkout('D'))  # 15
+print(checkout('AA'))  # 100
+print(checkout('BB'))  # 45
 
-# print('CHECKOUT 2')
-# print(checkout('AAA'))  # 130
-# print(checkout('AAAA'))  # 180
-# print(checkout('AAAAA'))  # 200
-# print(checkout('BB'))  # 45
-# print(checkout('EEB'))  # 80
-# print(checkout('EEEB'))  # 120
-# print(checkout('EEBEEB'))  # 160
+print('CHECKOUT 2')
+print(checkout('AAA'))  # 130
+print(checkout('AAAA'))  # 180
+print(checkout('AAAAA'))  # 200
+print(checkout('BB'))  # 45
+print(checkout('EEB'))  # 80
+print(checkout('EEEB'))  # 120
+print(checkout('EEBEEB'))  # 160
 
-# print('CHECKOUT 3')
-# print(checkout('F'))  # 10
-# print(checkout('FF'))  # 20
-# print(checkout('FFF'))  # 20
-# print(checkout('FFFF'))  # 30
-# print(checkout('FFFFF'))  # 40
-# print(checkout('FFFFFF'))  # 40
+print('CHECKOUT 3')
+print(checkout('F'))  # 10
+print(checkout('FF'))  # 20
+print(checkout('FFF'))  # 20
+print(checkout('FFFF'))  # 30
+print(checkout('FFFFF'))  # 40
+print(checkout('FFFFFF'))  # 40
 
-# print('CHECKOUT 4')
-# print(checkout('HHHHH'))  # 45
-# print(checkout('HHHHHHHHHH'))  # 80
-# print(checkout('KK'))  # 150
-# print(checkout('RRRQ'))  # 150
-# print(checkout('UUUU'))  # 120
-# print(checkout('BBEEEE'))  # 160
-# print(checkout('EEEEBB'))  # 160
+print('CHECKOUT 4')
+print(checkout('HHHHH'))  # 45
+print(checkout('HHHHHHHHHH'))  # 80
+print(checkout('KK'))  # 150
+print(checkout('RRRQ'))  # 150
+print(checkout('UUUU'))  # 120
+print(checkout('BBEEEE'))  # 160
+print(checkout('EEEEBB'))  # 160
 
-# print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ'))  # 1880
-# print(checkout('LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH'))  # 1880
-# print(checkout('NNNNNNMM'))  # 240
+print(checkout('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ'))  # 1880
+print(checkout('LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH'))  # 1880
+print(checkout('NNNNNNMM'))  # 240
+
+print('CHECKOUT 5')
+print(checkout('STXS'))  # 135
+print(checkout('TTXS'))  # 75
+print(checkout('ZZZ'))  # 45
+print(checkout('YYYA'))  # 45
